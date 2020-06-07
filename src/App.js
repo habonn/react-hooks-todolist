@@ -1,134 +1,247 @@
-import React, { useState } from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import DeleteIcon from '@material-ui/icons/Delete';
+import React from "react";
+import "./App.css";
+import LoginLayout from "./routes/LoginLayout/LoginLayout";
+import Todos from "./routes/Todos/TodosList";
+import TodosAdd from "./routes/Todos/TodosAdd";
+import { Switch, Route } from "react-router";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { SnackbarProvider } from "notistack";
+import { ThemeProvider } from "@material-ui/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
+import LoadingOverlay from "react-loading-overlay";
+import { WindMillLoading } from 'react-loadingg';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary">
-      {'Copyright © '} 
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { useGlobal } from "reactn";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
+const customTheme = createMuiTheme({
+    palette: {
+        primary: {
+            // light: will be calculated from palette.primary.main
+            main: "#008B8B",
+            dark: "#008B8B"
+            // dark: will be calculated from palette.primary.main,
+            // contrastText: will be calculated to contrast with palette.primary.main
+        },
+        secondary: {
+            main: "#008af3"
+        }
+    },
+    typography: {
+        // fontFamily: "Prompt",
+        fontFamily: "K2D", 
+        button: {
+            textTransform: "none"
+        }
+    },
+    props: {
+        MuiTextField: {
+            InputLabelProps: {
+                shrink: true
+            }
+        }
+        // MuiCheckbox: {
+        //     checkedIcon: <CheckOutlinedIcon />
+        // }
+    },
+    overrides: {
+        MuiCardContent: {
+            root: {
+                padding: "0px",
+                "&:last-child": {
+                    paddingBottom: "9px"
+                }
+            }
+        },
+        MuiToolbar: {
+            regular: {
+                minHeight: "40px",
+                "@media (min-width: 600px)": {
+                    // minHeight: '40px',
+                }
+            },
+            gutters: {
+                padding: "0",
+                "@media (min-width: 600px)": {
+                    padding: "0"
+                }
+            }
+        },
+        MuiContainer: {
+            root: {
+                padding: "0",
+                "@media (min-width: 600px)": {
+                    padding: "0"
+                }
+            }
+        },
+        MuiPaper: {
+            elevation4: {
+                boxShadow: "none"
+            }
+        },
+        MuiTableCell: {
+            head: {
+                background: "#008B8B",
+                fontSize: "16px",
+                // textAlign: "center",
+                color: "black",
+                fontWeight: "600",
+                whiteSpace: "nowrap"
+            },
+            body: {
+                // textAlign: "center",
+                fontSize: "14px",
+                whiteSpace: "nowrap"
+            },
+            root: {
+                paddingLeft: "10px",
+                paddingTop: "6px",
+                paddingBottom: "6px"
+                // padding: "0px 0px 5px 14px"
+            },
+            stickyHeader: {
+                backgroundColor: "#78bebf"
+            }
+        },
+        MuiOutlinedInput: {
+            input: {
+                padding: "8px 14px"
+            }
+        },
+        MuiFormLabel: {
+            root: {
+                color: "#535353",
+                "&&&&:hover": {
+                    color: "#535353"
+                },
+                "&$focused": {
+                    color: "#535353"
+                },
+                fontSize: "12px",
+                textAlign: "left"
+            }
+        },
+        MuiInput: {
+            underline: {
+                "&&&&:before": {
+                    borderBottom: "solid 1px #008af3"
+                }
+            }
+        },
+        MuiInputBase: {
+            root: {
+                color: "#535353"
+            },
+            input: {
+                color: "black",
+                padding: "6px",
+                fontSize: "16px"
+            }
+        },
+        MuiCheckbox: {
+            root: {
+                color: "#cccccc"
+            },
+            colorSecondary: {
+                "&&&&.Mui-checked": {
+                    // border: "solid 2px #cccccc",
+                    // borderRadius: "4px",
+                    // width: "20px",
+                    // height: "20px"
+                }
+            }
+        },
+        MuiIconButton: {
+            root: {
+                color: "#008af3"
+                // padding: "0px"
+            }
+        },
+        //Disable Toolbar
+        MUIDataTableToolbar: {
+            root: {
+                display: "none"
+            }
+        },
+        MuiFormControl: {
+            root: {
+                width: "100%"
+            },
+            marginNormal: {
+                marginTop: 8
+            }
+        },
+        MuiRadio: {
+            root: {
+                "&:disabled": {
+                    color: "grey !important"
+                }
+            }
+        },
+        MuiTypography: {
+            body1: {
+                fontSize: "14px"
+            }
+        },
+        MuiTableSortLabel: {
+            root: {
+                color: "white",
+                whiteSpace: "nowrap",
+                "&:hover": {
+                    color: "rgba(235, 245, 255) !important"
+                }
+            }
+        },
+        MuiExpansionPanelDetails: {
+            root: {
+                display: "flow-root"
+            }
+        },
+        MuiTableRow: {
+            hover: {
+                "&:hover": {
+                    backgroundColor: "#ebf5ff !important",
+                    cursor: "pointer"
+                }
+            }
+        }
+    }
+});
 
-  },
-  main: {
-    marginTop: theme.spacing(8),
-    marginBottom: theme.spacing(2),
-  },
-  footer: {
-    padding: theme.spacing(3, 2),
-    marginTop: 'auto',
-    backgroundColor:
-      theme.palette.type === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200],
-  },
-  card: {
-    minWidth: 275,
-  },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  }
-}));
+export default function App() {
+    const [loading] = useGlobal("loading");
 
-export default function StickyFooter() {
-
-  const classes = useStyles();
-  const [newTodo, setNewTodo] = useState('')
-  const [todos, setTodos] = useState([])
-
-  function handleNewTodoChange(e) {
-    e.preventDefault()
-    setNewTodo(e.target.value)
-    
-  }
-
-  function handleNewTodo(e) {
-    e.preventDefault()
-      if (newTodo === '') return
-      setTodos([...todos, {id: Date.now(), text:newTodo}])
-      e.target.reset()
-    
-  }
-
-  function removeTodo(id) {
-    setTodos(todos.filter((todo) => todo.id !== id))
-    
-  }
-
-  function removeTodoAll() {
-    setTodos([])
-    
-  }
-  // const bull = <span className={classes.bullet}>•</span>;
-
-
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <Container component="main" className={classes.main} maxWidth="sm">
-        <Typography variant="h2" component="h1" gutterBottom>
-          Todo List
-        </Typography>
-        <form onSubmit={handleNewTodo}>
-        <Typography variant="h5" component="h2" gutterBottom>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography className={classes.title} color="textSecondary" gutterBottom>
-                List of the Day
-              </Typography>              
-                  <TextField 
-                    inputStyle={{ textAlign: 'center' }}
-                    hintStyle={{ width: '600px', textAlign: 'center' }}
-                  id="standard-basic" label="Input Your List" onChange={handleNewTodoChange}/>
-              <Typography>
-                {todos.map((todo) => (
-                  <li key={todo.id}>
-                    {todo.text}
-                   <Button onClick={()=> removeTodo(todo.id)}><DeleteIcon /> </Button>
-                    </li>
-                ))}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button  onClick={()=> removeTodoAll()} size="small">Reset</Button>
-            </CardActions>
-          </Card>
-        </Typography>
-      </form>
-      </Container>
-      <footer className={classes.footer}>
-        <Container maxWidth="sm">
-          <Typography variant="body1">My sticky footer can be found here.</Typography>
-          <Copyright />
-        </Container>
-      </footer>
-    </div>
-  );
+    return (
+        <div className="App">
+            <CssBaseline />
+            <ThemeProvider theme={customTheme}>
+                <SnackbarProvider
+                    maxSnack={3}
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right"
+                    }}
+                    autoHideDuration={3000}
+                >
+                    <LoadingOverlay
+                        active={loading > 0}
+                        spinner={<WindMillLoading/>}
+                    >
+                        <Switch>
+                        <Route
+                            path="/main/form/:id"
+                            component={TodosAdd}
+                        />
+                        <Route
+                            path="/main/form"
+                            component={TodosAdd}
+                        />
+                            <Route path="/main" component={Todos} />
+                            <Route path="/" component={LoginLayout} />
+                        </Switch>
+                    </LoadingOverlay>
+                </SnackbarProvider>
+            </ThemeProvider>
+        </div>
+    );
 }

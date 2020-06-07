@@ -1,0 +1,25 @@
+.MuiOutlinedInput-adornedEnd {
+    padding-right: 0px !important;
+}
+
+.ant-calendar-picker {
+    width: 100%;
+    margin-top: 14px !important;
+}
+
+.ant-calendar-picker-input {
+    font-size: 14px !important;
+    height: 38px !important;
+    color: black !important;
+}
+
+.ant-time-picker {
+    margin-top: 8px !important;
+    width: 100% !important;
+}
+
+.ant-time-picker-input {
+    font-size: 16px !important;
+    height: 38px !important;
+    color: black !important;
+}
